@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image'
 import Step from './step'
-import Link from 'next/link';
+import AnimalLabLogo from './images/AnimalLab.png'
 
 export default function Home() {
 
@@ -14,12 +14,13 @@ export default function Home() {
       <div className="relative flex place-items-center">
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert cursor-pointer"
-          src="/animallab.webp"
+          src={AnimalLabLogo}
           alt="AnimalLab Logo"
           width={180}
           height={40}
           priority
           onClick={() => location.reload()}
+          unoptimized
         />
       </div>
     </main>
