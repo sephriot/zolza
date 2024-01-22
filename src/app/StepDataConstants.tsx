@@ -1,11 +1,12 @@
 import {
+  AndStepDisplayCondition,
   OrStepDisplayCondition,
   StepData,
   StepDisplayCondition,
   StepItem,
   StepResults,
   StepType,
-} from "./StepFunctions";
+} from "./stepFunctions";
 
 export const FINAL_STEP_VALUE = 1000000;
 
@@ -238,8 +239,7 @@ export const STEP_RESULTS: StepResults[] = [
 
       `,
     displayIf: [
-      new StepDisplayCondition(0, "Tlenowy", false),
-      new StepDisplayCondition(0, "Beztlenowy", false),
+      new AndStepDisplayCondition(0, ["Tlenowy", "Beztlenowy"], false),
     ],
   },
   {
@@ -252,7 +252,7 @@ export const STEP_RESULTS: StepResults[] = [
   {
     comments:
       "W przypadku znacznej oporności oznaczonej metodą krążkowo-dyfuzyjną zalecane jest oznaczenie wrażliwości szczepów bakteryjnych metodą rozcieńczeń MIC (minimalne stężenie hamujące).",
-    displayIf: [new StepDisplayCondition(1, "Tak", false)],
+    displayIf: [new StepDisplayCondition(11, "Tak", false)],
   },
   {
     comments: "Posiew wykonano z przednamnażaniem w bulionie odżywczym",

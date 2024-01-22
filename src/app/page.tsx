@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import AnimalLabLogo from "./images/AnimalLab.png";
-import Main from "./Main";
+import Main from "./main";
 
 export default function Home() {
   return (

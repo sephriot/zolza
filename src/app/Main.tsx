@@ -1,10 +1,10 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { NextStepIndex, SelectedStep } from "./StepFunctions";
+import { NextStepIndex, SelectedStep } from "./stepFunctions";
 import "./step.css";
-import { STEP_DATA } from "./StepDataConstants";
-import { Results } from "./Results";
-import { Step } from "./Step";
+import { STEP_DATA } from "./stepDataConstants";
+import { Results } from "./results";
+import { Step } from "./step";
 
 export default function Main() {
   const [stepIndex, setStepIndex] = useState(0);

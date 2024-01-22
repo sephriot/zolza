@@ -73,6 +73,39 @@ export class OrStepDisplayCondition implements IStepDisplayCondition {
   }
 }
 
+export class AndStepDisplayCondition implements IStepDisplayCondition {
+  index: number = -1;
+  values: string[] = [];
+  onlyOption: boolean = false;
+
+  constructor(index: number, values: string[], onlyOption: boolean = false) {
+    this.index = index;
+    this.values = values;
+    this.onlyOption = onlyOption;
+  }
+
+  fits(steps: SelectedStep[]): boolean {
+    let result = false;
+    steps.forEach((step) => {
+      console.log(
+        step.index == this.index,
+        step.items.filter((x) => this.values.indexOf(x.title) !== -1).length ===
+          this.values.length,
+        this.onlyOption ? step.items.length == 1 : true
+      );
+      if (
+        step.index == this.index &&
+        step.items.filter((x) => this.values.indexOf(x.title) !== -1).length ===
+          this.values.length &&
+        (this.onlyOption ? step.items.length == 1 : true)
+      ) {
+        result = true;
+      }
+    });
+    return result;
+  }
+}
+
 export interface StepItem {
   title: string;
   displayIf?: StepDisplayCondition[];

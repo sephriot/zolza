@@ -1,8 +1,7 @@
 "use client";
-
 import { useState } from "react";
-import { STEP_RESULTS } from "./StepDataConstants";
-import { SelectedStep, VisibleStepsFilter } from "./StepFunctions";
+import { STEP_RESULTS } from "./stepDataConstants";
+import { SelectedStep, VisibleStepsFilter } from "./stepFunctions";
 
 interface IResultsProps {
   history: SelectedStep[];

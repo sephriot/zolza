@@ -1,8 +1,8 @@
 "use client";
-import { SelectedStep, StepData, VisibleStepsFilter } from "./StepFunctions";
+import { SelectedStep, StepData, VisibleStepsFilter } from "./stepFunctions";
 
 import "./step.css";
-import StepItem from "./StepItem";
+import StepItem from "./stepItem";
 
 interface IStepProps {
   currentStepData: StepData;
