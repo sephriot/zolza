@@ -20,6 +20,13 @@ export default function Main() {
     if (currentSelectedStep.items.length == 0) {
       return;
     }
+    if (currentSelectedStep.items.filter((e) => e.isFinal).length > 0) {
+      setStepIndex(0);
+      setStepsHistory([]);
+      setCurrentSelectedStep(new SelectedStep(STEP_DATA.get(0)!.title, 0));
+      return;
+    }
+
     const nextStepHistory = [...stepsHistory, currentSelectedStep];
     setStepsHistory(nextStepHistory);
     const nextStepIndex = NextStepIndex(STEP_DATA, nextStepHistory, stepIndex);

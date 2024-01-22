@@ -13,10 +13,64 @@ export interface StepData {
   isFinal: boolean;
 }
 
-export interface StepDisplayCondition {
+export interface IStepDisplayCondition {
   index: number;
-  value: string;
+  values: string[];
   onlyOption: boolean;
+
+  fits(steps: SelectedStep[]): boolean;
+}
+
+export class StepDisplayCondition implements IStepDisplayCondition {
+  index: number = -1;
+  values: string[] = [];
+  onlyOption: boolean = false;
+  constructor(index: number, value: string, onlyOption: boolean = false) {
+    this.index = index;
+    this.values = [value];
+    this.onlyOption = onlyOption;
+  }
+
+  fits(steps: SelectedStep[]): boolean {
+    let result = false;
+    steps.forEach((step) => {
+      if (
+        step.index == this.index &&
+        step.items.filter((x) => x.title == this.values[0]).length > 0 &&
+        (this.onlyOption ? step.items.length == 1 : true)
+      ) {
+        result = true;
+      }
+    });
+    return result;
+  }
+}
+
+export class OrStepDisplayCondition implements IStepDisplayCondition {
+  index: number = -1;
+  values: string[] = [];
+  onlyOption: boolean = false;
+
+  constructor(index: number, values: string[], onlyOption: boolean = false) {
+    this.index = index;
+    this.values = values;
+    this.onlyOption = onlyOption;
+  }
+
+  fits(steps: SelectedStep[]): boolean {
+    let result = false;
+    steps.forEach((step) => {
+      if (
+        step.index == this.index &&
+        step.items.filter((x) => this.values.indexOf(x.title) !== -1).length >
+          0 &&
+        (this.onlyOption ? step.items.length == 1 : true)
+      ) {
+        result = true;
+      }
+    });
+    return result;
+  }
 }
 
 export interface StepItem {
@@ -24,6 +78,7 @@ export interface StepItem {
   displayIf?: StepDisplayCondition[];
   hideIf?: StepDisplayCondition[];
   style?: Object;
+  isFinal?: boolean;
 }
 
 export class SelectedStep {
@@ -42,20 +97,13 @@ export class SelectedStep {
 }
 
 export function StepDisplayConditionsMet(
-  history: Array<SelectedStep>,
+  history: SelectedStep[],
   conditions: StepDisplayCondition[]
 ) {
   let result = true;
+  console.log(conditions);
   conditions.forEach((condition) => {
-    if (
-      history.filter((x) => {
-        return (
-          x.index == condition.index &&
-          x.items.filter((y) => y.title == condition.value).length > 0 &&
-          (condition.onlyOption ? x.items.length == 1 : true)
-        );
-      }).length === 0
-    ) {
+    if (!condition.fits(history)) {
       result = false;
     }
   });
@@ -87,7 +135,7 @@ export function NextStepIndex(
   return nextStep === undefined ? undefined : nextStepIndex;
 }
 
-export function VisibleStepsFilter(history: Array<SelectedStep>) {
+export function VisibleStepsFilter(history: SelectedStep[]) {
   return (step: StepItem | StepResults) =>
     (step.displayIf === undefined ||
       StepDisplayConditionsMet(history, step.displayIf)) &&
@@ -96,9 +144,10 @@ export function VisibleStepsFilter(history: Array<SelectedStep>) {
 }
 
 export interface StepResults {
-  comments: string;
+  comments?: string;
+  mycology?: string;
   variant?: string;
   recommendations?: string;
-  displayIf?: StepDisplayCondition[];
-  hideIf?: StepDisplayCondition[];
+  displayIf?: IStepDisplayCondition[];
+  hideIf?: IStepDisplayCondition[];
 }

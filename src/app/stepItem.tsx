@@ -18,6 +18,10 @@ export default function StepItem(props: IStepItemProps) {
           name={props.currentStepData.title}
           className="clear-none"
           onChange={(event) => {
+            if (props.data.isFinal) {
+              alert("Wybrana opcja powoduje powrót do początku formluarza");
+            }
+
             if (props.currentStepData.type == StepType.Radio) {
               props.setCurrentSelectedStep(
                 props.currentSelectedStep.fromThis([props.data])

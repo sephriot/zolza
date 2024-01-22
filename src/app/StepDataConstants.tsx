@@ -1,4 +1,5 @@
 import {
+  OrStepDisplayCondition,
   StepData,
   StepDisplayCondition,
   StepItem,
@@ -8,9 +9,7 @@ import {
 
 export const FINAL_STEP_VALUE = 1000000;
 
-const DISPLAY_IF_SSAK = [
-  { index: 5, value: "Ssaki", onlyOption: false },
-] as StepDisplayCondition[];
+const DISPLAY_IF_SSAK = [new StepDisplayCondition(7, "Ssaki", false)];
 
 export const STEP_DATA: Map<number, StepData> = new Map([
   [
@@ -32,13 +31,12 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     {
       title: "Czy od daty posiewu minęły 72 godziny?",
       type: StepType.Radio,
-      displayIf: [
-        { index: 0, onlyOption: true, value: "Beztlenowy" },
-      ] as StepDisplayCondition[],
+      displayIf: [new StepDisplayCondition(0, "Beztlenowy", true)],
       items: [
         { title: "Tak" },
         {
           title: "Nie (odłóż protokół do segregatora)",
+          isFinal: true,
         },
       ] as StepItem[],
       isFinal: false,
@@ -47,11 +45,9 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     2,
     {
-      title: "Wynik posiewu",
+      title: "Wynik posiewu beztlenowego",
       type: StepType.Checkbox,
-      displayIf: [
-        { index: 0, onlyOption: true, value: "Beztlenowy" },
-      ] as StepDisplayCondition[],
+      displayIf: [new StepDisplayCondition(0, "PLACEHOLDER")],
       items: [
         { title: "Ujemny" },
         { title: "Clostridium" },
@@ -63,6 +59,34 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     3,
     {
+      title: "Posiew w kierunku grzybów drożdżopodobnych",
+      type: StepType.Radio,
+      displayIf: [new StepDisplayCondition(0, "Drożdżaki")],
+      items: [{ title: "W toku" }, { title: "Zakończony" }] as StepItem[],
+      isFinal: false,
+    },
+  ],
+  [
+    4,
+    {
+      title: "Wynik posiewu w kierunku grzybów drożdżopodobnych",
+      type: StepType.Checkbox,
+      displayIf: [
+        new StepDisplayCondition(0, "Drożdżaki"),
+        new StepDisplayCondition(3, "Zakończony"),
+      ],
+      items: [
+        { title: "Malassezia" },
+        { title: "Candida" },
+        { title: "Rhodotorula" },
+        { title: "ujemny" },
+      ] as StepItem[],
+      isFinal: false,
+    },
+  ],
+  [
+    5,
+    {
       title: "Wybierz materiał / miejsce pobrania",
       type: StepType.Radio,
       items: [
@@ -71,9 +95,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
         { title: "Oko / Ucho" },
         {
           title: "Kał / prostnica",
-          hideIf: [
-            { index: 0, value: "Tlenowy", onlyOption: false },
-          ] as StepDisplayCondition[],
+          hideIf: [new StepDisplayCondition(0, "Tlenowy", false)],
         },
         {
           title: "Płyny / pochwa / napletek / mleko",
@@ -83,33 +105,29 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     },
   ],
   [
-    4,
+    6,
     {
       title: "Czy wykonano przednamnażanie w bulionie odżywczym?",
       type: StepType.Radio,
       displayIf: [
-        {
-          index: 3,
-          value: "Płyny / pochwa / napletek / mleko",
-          onlyOption: false,
-        },
+        new StepDisplayCondition(5, "Płyny / pochwa / napletek / mleko", false),
       ],
       items: [{ title: "Tak" }, { title: "Nie" }] as StepItem[],
       isFinal: false,
     },
   ],
   [
-    5,
+    7,
     {
       title: "Wybierz grupę zwierząt",
       type: StepType.Radio,
-      displayIf: [{ index: 3, value: "Kał / prostnica", onlyOption: false }],
+      displayIf: [new StepDisplayCondition(5, "Kał / prostnica", false)],
       items: [{ title: "Ssaki" }, { title: "Pozostałe" }] as StepItem[],
       isFinal: false,
     },
   ],
   [
-    6,
+    8,
     {
       title: "Wybierz drobnoustrój",
       type: StepType.Checkbox,
@@ -154,13 +172,11 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     },
   ],
   [
-    7,
+    9,
     {
       title: "Eschericha coli:",
       type: StepType.Checkbox,
-      displayIf: [
-        { index: 6, onlyOption: false, value: "Escherichia coli" },
-      ] as StepDisplayCondition[],
+      displayIf: [new StepDisplayCondition(8, "Escherichia coli", false)],
       items: [
         {
           title: "Hemolizuje - (β - hem)",
@@ -180,19 +196,17 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     },
   ],
   [
-    8,
+    10,
     {
       title: "Czy Klebsiella występuje jako monokultura?",
       type: StepType.Radio,
-      displayIf: [
-        { index: 6, onlyOption: true, value: "Klebsiella spp." },
-      ] as StepDisplayCondition[],
+      displayIf: [new StepDisplayCondition(8, "Klebsiella spp.", true)],
       items: [{ title: "Tak" }, { title: "Nie" }] as StepItem[],
       isFinal: false,
     },
   ],
   [
-    9,
+    11,
     {
       title:
         "Czy bakteria / któraś z bakterii jest odporna na większość antybiotyków",
@@ -207,68 +221,60 @@ export const STEP_RESULTS: StepResults[] = [
   {
     comments:
       "<b>ENTEROCOCCUS</b>; bakterie z rodzaju Enterococcus wykazują często naturalną oporność na penicylinę, ampicylinę oraz większość cefalosporyn; wrażliwość na penicylinę oraz ampicylinę sugeruje wrażliwość na amoksycylinę z kwasem klawulanowym lub ampicylinę z sulbaktamem; wykazana w warunkach in vitro wrażliwość na cefalosporyny, klindamycynę oraz sulfametoksazol z trimetoprimem może okazać się niewystarczająca w terapii klinicznej; monoterapia z użyciem aminoglikozydów jest nieskuteczna, zaleca się terapię łączoną aminoglikozydów z penicylinami",
-    displayIf: [
-      {
-        index: 6,
-        value: "Enterococcus",
-        onlyOption: false,
-      },
-    ] as StepDisplayCondition[],
+    displayIf: [new StepDisplayCondition(8, "Enterococcus", false)],
   },
   {
     comments:
       "<b>PSEUDOMONAS:</b> bakterie z rodzaju Pseudomonas wykazują oporność na antybiotyki beta-laktamowe, w tym penicylinę G, ampicylinę, amoksycylinę z kwasem klawulanowym, cefalosporyny I i II generacji, a także makrolidy, linkozamidy, streptograminy, tetracykliny, oksazolidony, chloramfenikol, kwas fusydowy, sulfonamidy z trimetoprimem, wankomycynę i teikoplaninę",
-    displayIf: [
-      {
-        index: 6,
-        value: "Pseudomonas",
-        onlyOption: false,
-      },
-    ] as StepDisplayCondition[],
+    displayIf: [new StepDisplayCondition(8, "Pseudomonas", false)],
   },
   {
     comments:
       "<b>ENTEROBACTERIACEAE;</b> bakterie należące do rodziny Enterobacteriaceae wykazują naturalną oporność na: klindamycynę, kwas fusydowy, glikopeptydy (wankomycyna, teikoplaniny), makrolidy (azytromycyna, erytromycyna, klarytromycyna) oraz rifampicynę; wyjątkiem jest azytromycyna wykazująca aktywność wobec szczepów wywołujących biegunkę, w tym Campylobacter spp., Salmonella spp., Shigella spp., enteropatogenne szczepy Escherichia coli",
+    displayIf: [new StepDisplayCondition(8, "Enterobacter", false)],
+  },
+  {
+    comments: `<b>(-) UJEMNY:</b> Nie stwierdzono wzrostu bakterii po 24, 48 oraz 72 godzinach, zarówno na podłożach namnażających jak i selektywnych <b>w warunkach beztlenowych</b>.
+
+      `,
     displayIf: [
-      {
-        index: 6,
-        value: "Enterobacterales",
-        onlyOption: false,
-      },
-    ] as StepDisplayCondition[],
+      new StepDisplayCondition(0, "Tlenowy", false),
+      new StepDisplayCondition(0, "Beztlenowy", false),
+    ],
   },
   {
     comments: `<b>AUTOSZCZEPIONKA:</b> w przypadku wyhodowania szczepu wielolekopornego lub gdy zakażenie bakteryjne jest przewlekłe/nawracające, a czynnikiem etiologicznym we wcześniej uzyskanych wynikach badań jest ten sam drobnoustrój, istnieje możliwość wykonania autoszczepionki. Wyhodowany w laboratorium szczep będzie przechowywany przez 48h w oczekiwaniu na decyzję prowadzącego lekarza weterynarii.
   
       W przypadku znacznej oporności oznaczonej metodą krążkowo-dyfuzyjną zalecane jest oznaczenie wrażliwości szczepów bakteryjnych metodą rozcieńczeń MIC (minimalne stężenie hamujące).
       `,
-    displayIf: [
-      {
-        index: 0,
-        value: "Tlenowy",
-        onlyOption: false,
-      },
-    ] as StepDisplayCondition[],
+    displayIf: [new StepDisplayCondition(0, "Tlenowy", false)],
   },
   {
     comments:
       "W przypadku znacznej oporności oznaczonej metodą krążkowo-dyfuzyjną zalecane jest oznaczenie wrażliwości szczepów bakteryjnych metodą rozcieńczeń MIC (minimalne stężenie hamujące).",
-    displayIf: [
-      {
-        index: 9,
-        value: "Tak",
-        onlyOption: false,
-      },
-    ] as StepDisplayCondition[],
+    displayIf: [new StepDisplayCondition(1, "Tak", false)],
   },
   {
     comments: "Posiew wykonano z przednamnażaniem w bulionie odżywczym",
+    displayIf: [new StepDisplayCondition(6, "Tak", false)],
+  },
+  {
+    mycology:
+      "Wyhodowano <b>Malassezia spp. / Candida spp. / Rhodotorula spp.</b>",
     displayIf: [
-      {
-        index: 4,
-        value: "Tak",
-        onlyOption: false,
-      },
-    ] as StepDisplayCondition[],
+      new OrStepDisplayCondition(
+        4,
+        ["Malassezia", "Candida", "Rhodotorula"],
+        false
+      ),
+    ],
+  },
+  {
+    mycology: "Nie wyhodowano grzybów drożdżopodobnych.",
+    displayIf: [new StepDisplayCondition(4, "ujemny", true)],
+  },
+  {
+    mycology: "Rozpoczęto hodowlę, wynik za około (7 dni od daty posiewu).",
+    displayIf: [new StepDisplayCondition(3, "W toku", true)],
   },
 ];
