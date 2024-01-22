@@ -87,12 +87,6 @@ export class AndStepDisplayCondition implements IStepDisplayCondition {
   fits(steps: SelectedStep[]): boolean {
     let result = false;
     steps.forEach((step) => {
-      console.log(
-        step.index == this.index,
-        step.items.filter((x) => this.values.indexOf(x.title) !== -1).length ===
-          this.values.length,
-        this.onlyOption ? step.items.length == 1 : true
-      );
       if (
         step.index == this.index &&
         step.items.filter((x) => this.values.indexOf(x.title) !== -1).length ===
@@ -134,7 +128,6 @@ export function StepDisplayConditionsMet(
   conditions: StepDisplayCondition[]
 ) {
   let result = true;
-  console.log(conditions);
   conditions.forEach((condition) => {
     if (!condition.fits(history)) {
       result = false;

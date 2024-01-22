@@ -43,17 +43,6 @@ export default function Main() {
     setCurrentSelectedStep(newCurrentSelectedStep);
   }, [stepIndex, currentSelectedStep, stepsHistory]);
 
-  useEffect(() => {
-    console.log(
-      "Potential next step",
-      NextStepIndex(
-        STEP_DATA,
-        [...stepsHistory, currentSelectedStep],
-        stepIndex
-      )
-    );
-  }, [stepsHistory, stepIndex, currentSelectedStep]);
-
   return displayResults ? (
     <Results history={stepsHistory} />
   ) : (
