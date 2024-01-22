@@ -1,89 +1,10 @@
-export enum StepType {
-  Checkbox,
-  Radio,
-}
-
-export interface StepData {
-  title: string;
-  type: StepType;
-  displayIf?: StepDisplayCondition[];
-  hideIf?: StepDisplayCondition[];
-  items: Array<StepItem>;
-  comment?: string;
-}
-
-export interface StepDisplayCondition {
-  index: number;
-  value: string;
-  onlyOption: boolean;
-}
-
-export interface StepItem {
-  title: string;
-  displayIf?: StepDisplayCondition[];
-  hideIf?: StepDisplayCondition[];
-  style?: Object;
-}
-
-export class SelectedStep {
-  title: string = "";
-  index: number = 0;
-  items: Array<StepItem> = [];
-  constructor(title: string, index: number, items: Array<StepItem> = []) {
-    this.title = title;
-    this.index = index;
-    this.items = items;
-  }
-
-  fromThis(items: Array<StepItem>) {
-    return new SelectedStep(this.title, this.index, items);
-  }
-}
-
-export function StepDisplayConditionsMet(
-  history: Array<SelectedStep>,
-  conditions: StepDisplayCondition[]
-) {
-  let result = true;
-  conditions.forEach((condition) => {
-    if (
-      history.filter((x) => {
-        return (
-          x.index == condition.index &&
-          x.items.filter((y) => y.title == condition.value).length > 0 &&
-          (condition.onlyOption ? x.items.length == 1 : true)
-        );
-      }).length === 0
-    ) {
-      result = false;
-    }
-  });
-  return result;
-}
-
-export function NextStepIndex(history: Array<SelectedStep>, stepIndex: number) {
-  let nextStepIndex = stepIndex + 1;
-  let nextStep = STEP_DATA.get(nextStepIndex);
-  while (
-    nextStep !== undefined &&
-    ((nextStep?.displayIf !== undefined &&
-      !StepDisplayConditionsMet(history, nextStep.displayIf)) ||
-      (nextStep?.hideIf !== undefined &&
-        StepDisplayConditionsMet(history, nextStep.hideIf)))
-  ) {
-    nextStepIndex++;
-    nextStep = STEP_DATA.get(nextStepIndex);
-  }
-  return nextStep === undefined ? FINAL_STEP_VALUE : nextStepIndex;
-}
-
-export function VisibleStepsFilter(history: Array<SelectedStep>) {
-  return (step: StepItem) =>
-    (step.displayIf === undefined ||
-      StepDisplayConditionsMet(history, step.displayIf)) &&
-    (step.hideIf === undefined ||
-      !StepDisplayConditionsMet(history, step.hideIf));
-}
+import {
+  StepData,
+  StepDisplayCondition,
+  StepItem,
+  StepResults,
+  StepType,
+} from "./StepFunctions";
 
 export const FINAL_STEP_VALUE = 1000000;
 
@@ -102,7 +23,8 @@ export const STEP_DATA: Map<number, StepData> = new Map([
         { title: "Beztlenowy" },
         { title: "Enteropatogeny" },
         { title: "Drożdżaki" },
-      ],
+      ] as StepItem[],
+      isFinal: false,
     },
   ],
   [
@@ -110,7 +32,6 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     {
       title: "Wybierz materiał / miejsce pobrania",
       type: StepType.Radio,
-
       items: [
         { title: "Skóra" },
         { title: "Mocz" },
@@ -124,7 +45,8 @@ export const STEP_DATA: Map<number, StepData> = new Map([
         {
           title: "Płyny / pochwa / napletek / mleko",
         },
-      ],
+      ] as StepItem[],
+      isFinal: false,
     },
   ],
   [
@@ -133,7 +55,8 @@ export const STEP_DATA: Map<number, StepData> = new Map([
       title: "Wybierz grupę zwierząt",
       type: StepType.Radio,
       displayIf: [{ index: 1, value: "Kał / prostnica", onlyOption: false }],
-      items: [{ title: "Ssaki" }, { title: "Pozostałe" }],
+      items: [{ title: "Ssaki" }, { title: "Pozostałe" }] as StepItem[],
+      isFinal: false,
     },
   ],
   [
@@ -177,7 +100,8 @@ export const STEP_DATA: Map<number, StepData> = new Map([
           title: "Pozostałe",
           displayIf: DISPLAY_IF_SSAK,
         },
-      ],
+      ] as StepItem[],
+      isFinal: false,
     },
   ],
   [
@@ -202,7 +126,8 @@ export const STEP_DATA: Map<number, StepData> = new Map([
         {
           title: "Żadne z powyższych",
         },
-      ],
+      ] as StepItem[],
+      isFinal: false,
     },
   ],
   [
@@ -211,8 +136,8 @@ export const STEP_DATA: Map<number, StepData> = new Map([
       title:
         "Czy bakteria / któraś z bakterii jest odporna na większość antybiotyków",
       type: StepType.Radio,
-
       items: [{ title: "Tak" }, { title: "Nie" }],
+      isFinal: true,
     },
   ],
   [
@@ -220,8 +145,8 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     {
       title: "Czy Klebsiella występuje jako monokultura?",
       type: StepType.Radio,
-
-      items: [{ title: "Tak" }, { title: "Nie" }],
+      items: [{ title: "Tak" }, { title: "Nie" }] as StepItem[],
+      isFinal: false,
     },
   ],
   [
@@ -229,13 +154,13 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     {
       title: "Czy od daty posiewu minęły 72 godziny?",
       type: StepType.Radio,
-
       items: [
         { title: "Tak" },
         {
           title: "Nie (odłóż protokół do segregatora)",
         },
-      ],
+      ] as StepItem[],
+      isFinal: false,
     },
   ],
   [
@@ -243,26 +168,55 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     {
       title: "Wynik posiewu",
       type: StepType.Checkbox,
-
-      items: [{ title: "Ujemny" }, { title: "Clostridium" }, { title: "Inne" }],
+      items: [
+        { title: "Ujemny" },
+        { title: "Clostridium" },
+        { title: "Inne" },
+      ] as StepItem[],
+      isFinal: false,
     },
   ],
 ]);
 
-export interface StepResults {
-  comments: string;
-  variant?: string;
-  recommendations?: string;
-  displayIf?: StepDisplayCondition[];
-}
-
 export const STEP_RESULTS: StepResults[] = [
-  {},
   {
-    comments: `AUTOSZCZEPIONKA: w przypadku wyhodowania szczepu wielolekopornego lub gdy zakażenie bakteryjne jest przewlekłe/nawracające, a czynnikiem etiologicznym we wcześniej uzyskanych wynikach badań jest ten sam drobnoustrój, istnieje możliwość wykonania autoszczepionki. Wyhodowany w laboratorium szczep będzie przechowywany przez 48h w oczekiwaniu na decyzję prowadzącego lekarza weterynarii.
-
-    W przypadku znacznej oporności oznaczonej metodą krążkowo-dyfuzyjną zalecane jest oznaczenie wrażliwości szczepów bakteryjnych metodą rozcieńczeń MIC (minimalne stężenie hamujące).
-    `,
+    comments:
+      "<b>ENTEROCOCCUS</b>; bakterie z rodzaju Enterococcus wykazują często naturalną oporność na penicylinę, ampicylinę oraz większość cefalosporyn; wrażliwość na penicylinę oraz ampicylinę sugeruje wrażliwość na amoksycylinę z kwasem klawulanowym lub ampicylinę z sulbaktamem; wykazana w warunkach in vitro wrażliwość na cefalosporyny, klindamycynę oraz sulfametoksazol z trimetoprimem może okazać się niewystarczająca w terapii klinicznej; monoterapia z użyciem aminoglikozydów jest nieskuteczna, zaleca się terapię łączoną aminoglikozydów z penicylinami",
+    displayIf: [
+      {
+        index: 3,
+        value: "Enterococcus",
+        onlyOption: false,
+      },
+    ] as StepDisplayCondition[],
+  },
+  {
+    comments:
+      "<b>PSEUDOMONAS:</b> bakterie z rodzaju Pseudomonas wykazują oporność na antybiotyki beta-laktamowe, w tym penicylinę G, ampicylinę, amoksycylinę z kwasem klawulanowym, cefalosporyny I i II generacji, a także makrolidy, linkozamidy, streptograminy, tetracykliny, oksazolidony, chloramfenikol, kwas fusydowy, sulfonamidy z trimetoprimem, wankomycynę i teikoplaninę",
+    displayIf: [
+      {
+        index: 3,
+        value: "Pseudomonas",
+        onlyOption: false,
+      },
+    ] as StepDisplayCondition[],
+  },
+  {
+    comments:
+      "<b>ENTEROBACTERIACEAE;</b> bakterie należące do rodziny Enterobacteriaceae wykazują naturalną oporność na: klindamycynę, kwas fusydowy, glikopeptydy (wankomycyna, teikoplaniny), makrolidy (azytromycyna, erytromycyna, klarytromycyna) oraz rifampicynę; wyjątkiem jest azytromycyna wykazująca aktywność wobec szczepów wywołujących biegunkę, w tym Campylobacter spp., Salmonella spp., Shigella spp., enteropatogenne szczepy Escherichia coli",
+    displayIf: [
+      {
+        index: 3,
+        value: "Enterobacterales",
+        onlyOption: false,
+      },
+    ] as StepDisplayCondition[],
+  },
+  {
+    comments: `<b>AUTOSZCZEPIONKA:</b> w przypadku wyhodowania szczepu wielolekopornego lub gdy zakażenie bakteryjne jest przewlekłe/nawracające, a czynnikiem etiologicznym we wcześniej uzyskanych wynikach badań jest ten sam drobnoustrój, istnieje możliwość wykonania autoszczepionki. Wyhodowany w laboratorium szczep będzie przechowywany przez 48h w oczekiwaniu na decyzję prowadzącego lekarza weterynarii.
+  
+      W przypadku znacznej oporności oznaczonej metodą krążkowo-dyfuzyjną zalecane jest oznaczenie wrażliwości szczepów bakteryjnych metodą rozcieńczeń MIC (minimalne stężenie hamujące).
+      `,
     displayIf: [
       {
         index: 0,

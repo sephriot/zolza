@@ -1,6 +1,6 @@
 "use client";
 
-import { SelectedStep, StepData, StepItem, StepType } from "./stepdata";
+import { SelectedStep, StepData, StepItem, StepType } from "./StepFunctions";
 
 interface IStepItemProps {
   data: StepItem;
