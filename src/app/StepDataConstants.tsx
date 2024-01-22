@@ -52,6 +52,22 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     2,
     {
+      title: "Czy wykonano przednamnażanie w bulionie odżywczym?",
+      type: StepType.Radio,
+      displayIf: [
+        {
+          index: 1,
+          value: "Płyny / pochwa / napletek / mleko",
+          onlyOption: false,
+        },
+      ],
+      items: [{ title: "Tak" }, { title: "Nie" }] as StepItem[],
+      isFinal: false,
+    },
+  ],
+  [
+    3,
+    {
       title: "Wybierz grupę zwierząt",
       type: StepType.Radio,
       displayIf: [{ index: 1, value: "Kał / prostnica", onlyOption: false }],
@@ -60,7 +76,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     },
   ],
   [
-    3,
+    4,
     {
       title: "Wybierz drobnoustrój",
       type: StepType.Checkbox,
@@ -105,12 +121,12 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     },
   ],
   [
-    4,
+    5,
     {
       title: "Eschericha coli:",
       type: StepType.Checkbox,
       displayIf: [
-        { index: 3, onlyOption: true, value: "Escherichia coli" },
+        { index: 4, onlyOption: true, value: "Escherichia coli" },
       ] as StepDisplayCondition[],
       items: [
         {
@@ -131,7 +147,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     },
   ],
   [
-    5,
+    6,
     {
       title:
         "Czy bakteria / któraś z bakterii jest odporna na większość antybiotyków",
@@ -141,7 +157,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     },
   ],
   [
-    6,
+    7,
     {
       title: "Czy Klebsiella występuje jako monokultura?",
       type: StepType.Radio,
@@ -150,7 +166,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     },
   ],
   [
-    7,
+    8,
     {
       title: "Czy od daty posiewu minęły 72 godziny?",
       type: StepType.Radio,
@@ -164,7 +180,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     },
   ],
   [
-    8,
+    9,
     {
       title: "Wynik posiewu",
       type: StepType.Checkbox,
@@ -184,7 +200,7 @@ export const STEP_RESULTS: StepResults[] = [
       "<b>ENTEROCOCCUS</b>; bakterie z rodzaju Enterococcus wykazują często naturalną oporność na penicylinę, ampicylinę oraz większość cefalosporyn; wrażliwość na penicylinę oraz ampicylinę sugeruje wrażliwość na amoksycylinę z kwasem klawulanowym lub ampicylinę z sulbaktamem; wykazana w warunkach in vitro wrażliwość na cefalosporyny, klindamycynę oraz sulfametoksazol z trimetoprimem może okazać się niewystarczająca w terapii klinicznej; monoterapia z użyciem aminoglikozydów jest nieskuteczna, zaleca się terapię łączoną aminoglikozydów z penicylinami",
     displayIf: [
       {
-        index: 3,
+        index: 4,
         value: "Enterococcus",
         onlyOption: false,
       },
@@ -195,7 +211,7 @@ export const STEP_RESULTS: StepResults[] = [
       "<b>PSEUDOMONAS:</b> bakterie z rodzaju Pseudomonas wykazują oporność na antybiotyki beta-laktamowe, w tym penicylinę G, ampicylinę, amoksycylinę z kwasem klawulanowym, cefalosporyny I i II generacji, a także makrolidy, linkozamidy, streptograminy, tetracykliny, oksazolidony, chloramfenikol, kwas fusydowy, sulfonamidy z trimetoprimem, wankomycynę i teikoplaninę",
     displayIf: [
       {
-        index: 3,
+        index: 4,
         value: "Pseudomonas",
         onlyOption: false,
       },
@@ -206,7 +222,7 @@ export const STEP_RESULTS: StepResults[] = [
       "<b>ENTEROBACTERIACEAE;</b> bakterie należące do rodziny Enterobacteriaceae wykazują naturalną oporność na: klindamycynę, kwas fusydowy, glikopeptydy (wankomycyna, teikoplaniny), makrolidy (azytromycyna, erytromycyna, klarytromycyna) oraz rifampicynę; wyjątkiem jest azytromycyna wykazująca aktywność wobec szczepów wywołujących biegunkę, w tym Campylobacter spp., Salmonella spp., Shigella spp., enteropatogenne szczepy Escherichia coli",
     displayIf: [
       {
-        index: 3,
+        index: 4,
         value: "Enterobacterales",
         onlyOption: false,
       },
@@ -230,7 +246,17 @@ export const STEP_RESULTS: StepResults[] = [
       "W przypadku znacznej oporności oznaczonej metodą krążkowo-dyfuzyjną zalecane jest oznaczenie wrażliwości szczepów bakteryjnych metodą rozcieńczeń MIC (minimalne stężenie hamujące).",
     displayIf: [
       {
-        index: 5,
+        index: 6,
+        value: "Tak",
+        onlyOption: false,
+      },
+    ] as StepDisplayCondition[],
+  },
+  {
+    comments: "Posiew wykonano z przednamnażaniem w bulionie odżywczym",
+    displayIf: [
+      {
+        index: 2,
         value: "Tak",
         onlyOption: false,
       },

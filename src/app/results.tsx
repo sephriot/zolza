@@ -27,14 +27,14 @@ export function Results(props: IResultsProps) {
           ></div>
         ))}
       </div>
-      {results.filter((e) => e.variant === undefined).length > 0 && (
+      {results.filter((e) => e.variant !== undefined).length > 0 && (
         <>
           <div className="text-xl text-sky-800">Szczep</div>
           <div>OK</div>
         </>
       )}
 
-      {results.filter((e) => e.recommendations === undefined).length > 0 && (
+      {results.filter((e) => e.recommendations !== undefined).length > 0 && (
         <>
           <div className="text-xl text-red-600">Zalecenia</div>
           <div>OK</div>
