@@ -12,6 +12,7 @@ interface IStepProps {
   setCurrentSelectedStep: (newSelectedStep: SelectedStep) => void;
   stepsHistory: Array<SelectedStep>;
   nextStep: () => void;
+  previousStep: () => void;
 }
 
 export function Step(props: IStepProps) {
@@ -32,7 +33,6 @@ export function Step(props: IStepProps) {
       Math.ceil(visibleSteps.length / (width > 1024 ? 4 : width > 768 ? 2 : 1))
     );
   }, [visibleSteps, width]);
-
   return (
     <div className="min-w-full items-center justify-between">
       <div className="items-center mb-8 text-4xl text-center">
@@ -56,13 +56,11 @@ export function Step(props: IStepProps) {
         <button
           className={
             "rounded-full px-2 mx-2 py-1 text-xl" +
-            (props.currentSelectedStep.items.length > 0
-              ? " bg-gray-400 cursor-default"
+            (props.stepsHistory.length > 0
+              ? " bg-red-500 cursor-pointer"
               : " bg-gray-400 cursor-default")
           }
-          onClick={() => {
-            // TODO
-          }}
+          onClick={props.previousStep}
         >
           Wstecz
         </button>
@@ -70,10 +68,10 @@ export function Step(props: IStepProps) {
           className={
             "rounded-full px-2 py-1 text-xl" +
             (props.currentSelectedStep.items.length > 0
-              ? " bg-sky-400 cursor-pointer"
+              ? " bg-sky-500 cursor-pointer"
               : " bg-gray-400 cursor-default")
           }
-          onClick={() => props.nextStep()}
+          onClick={props.nextStep}
         >
           Dalej
         </button>

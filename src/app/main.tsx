@@ -16,6 +16,20 @@ export default function Main() {
   const [stepsHistory, setStepsHistory] = useState<Array<SelectedStep>>([]);
   const [displayResults, setDisplayResults] = useState(false);
 
+  const previousStep = useCallback(() => {
+    if (stepsHistory.length === 0) {
+      return;
+    }
+    const lastStep = stepsHistory.pop()!;
+    setStepsHistory(stepsHistory);
+    setStepIndex(lastStep.index);
+    const newCurrentSelectedStep = new SelectedStep(
+      STEP_DATA.get(lastStep.index)!.title,
+      lastStep.index
+    );
+    setCurrentSelectedStep(newCurrentSelectedStep);
+  }, [stepsHistory]);
+
   const nextStep = useCallback(() => {
     if (currentSelectedStep.items.length == 0) {
       return;
@@ -46,12 +60,24 @@ export default function Main() {
   return displayResults ? (
     <Results history={stepsHistory} />
   ) : (
-    <Step
-      currentStepData={currentStepData}
-      currentSelectedStep={currentSelectedStep}
-      setCurrentSelectedStep={setCurrentSelectedStep}
-      stepsHistory={stepsHistory}
-      nextStep={nextStep}
-    />
+    <div className="flex flex-col min-w-full items-center justify-between">
+      {/* <div className="mb-12">
+        {stepsHistory.map((x, idx) => {
+          return (
+            <div key={x.index}>
+              {x.title} {idx !== stepsHistory.length - 1 ? " > " : ""}
+            </div>
+          );
+        })}
+      </div> */}
+      <Step
+        currentStepData={currentStepData}
+        currentSelectedStep={currentSelectedStep}
+        setCurrentSelectedStep={setCurrentSelectedStep}
+        stepsHistory={stepsHistory}
+        nextStep={nextStep}
+        previousStep={previousStep}
+      />
+    </div>
   );
 }
