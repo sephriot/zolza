@@ -14,7 +14,7 @@ export function Results(props: IResultsProps) {
 
   return (
     <div>
-      <div className="text-xl text-lime-600 font-semibold">
+      <div className="text-xl text-lime-600 font-semibold px-4">
         Komentarze główne (pole &quot;Wyniki badania&quot;)
       </div>
       <div className="border-solid border-2 border-lime-700 bg-lime-200 px-4">
@@ -31,7 +31,7 @@ export function Results(props: IResultsProps) {
       </div>
       {results.filter((e) => e.mycology !== undefined).length > 0 && (
         <>
-          <div className="text-xl text-amber-800 mt-2 font-semibold">
+          <div className="text-xl text-amber-800 mt-2 font-semibold px-4">
             Mykologia
           </div>
           <div className="border-solid border-2 border-amber-700 bg-orange-200 px-4">
@@ -51,14 +51,14 @@ export function Results(props: IResultsProps) {
 
       {results.filter((e) => e.variant !== undefined).length > 0 && (
         <>
-          <div className="text-xl text-sky-800">Szczep</div>
+          <div className="text-xl text-sky-800 px-4">Szczep</div>
           <div>OK</div>
         </>
       )}
 
       {results.filter((e) => e.recommendations !== undefined).length > 0 && (
         <>
-          <div className="text-xl text-red-600">Zalecenia</div>
+          <div className="text-xl text-red-600 px-4">Zalecenia</div>
           <div>OK</div>
         </>
       )}

@@ -16,7 +16,7 @@ export default function StepItem(props: IStepItemProps) {
       <div className="form-group">
         <input
           name={props.currentStepData.title}
-          className="clear-none"
+          className="clear-none scale-150"
           onChange={(event) => {
             if (props.data.isFinal) {
               alert("Wybrana opcja powoduje powrót do początku formluarza");
