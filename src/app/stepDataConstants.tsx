@@ -16,7 +16,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     0,
     {
-      title: "Wybierz rodzaj posiewu",
+      title: "Wybierz rodzaj posiewu:",
       type: StepType.Checkbox,
       items: [
         { title: "Tlenowy" },
@@ -32,7 +32,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     {
       title: "Czy od daty posiewu minęły 72 godziny?",
       type: StepType.Radio,
-      displayIf: [new StepDisplayCondition(0, "Beztlenowy", true)],
+      displayIf: [new StepDisplayCondition(0, "Beztlenowy", false)],
       items: [
         { title: "Tak" },
         {
@@ -46,7 +46,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     2,
     {
-      title: "Wynik posiewu beztlenowego",
+      title: "Wynik posiewu beztlenowego:",
       type: StepType.Checkbox,
       displayIf: [new StepDisplayCondition(0, "PLACEHOLDER")],
       items: [
@@ -60,7 +60,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     3,
     {
-      title: "Posiew w kierunku grzybów drożdżopodobnych",
+      title: "Posiew w kierunku grzybów drożdżopodobnych:",
       type: StepType.Radio,
       displayIf: [new StepDisplayCondition(0, "Drożdżaki")],
       items: [{ title: "W toku" }, { title: "Zakończony" }] as StepItem[],
@@ -70,7 +70,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     4,
     {
-      title: "Wynik posiewu w kierunku grzybów drożdżopodobnych",
+      title: "Wynik posiewu w kierunku grzybów drożdżopodobnych:",
       type: StepType.Checkbox,
       displayIf: [
         new StepDisplayCondition(0, "Drożdżaki"),
@@ -88,7 +88,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     5,
     {
-      title: "Wybierz materiał / miejsce pobrania",
+      title: "Wybierz materiał / miejsce pobrania:",
       type: StepType.Radio,
       items: [
         { title: "Skóra" },
@@ -120,7 +120,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     7,
     {
-      title: "Wybierz grupę zwierząt",
+      title: "Wybierz grupę zwierząt:",
       type: StepType.Radio,
       displayIf: [new StepDisplayCondition(5, "Kał / prostnica", false)],
       items: [{ title: "Ssaki" }, { title: "Pozostałe" }] as StepItem[],
@@ -130,7 +130,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
   [
     8,
     {
-      title: "Wybierz drobnoustrój",
+      title: "Wybierz drobnoustrój:",
       type: StepType.Checkbox,
       items: [
         { title: "Staphylococcus", hideIf: DISPLAY_IF_SSAK },
@@ -210,7 +210,7 @@ export const STEP_DATA: Map<number, StepData> = new Map([
     11,
     {
       title:
-        "Czy bakteria / któraś z bakterii jest odporna na większość antybiotyków",
+        "Czy bakteria / któraś z bakterii jest oporna na większość antybiotyków?",
       type: StepType.Radio,
       items: [{ title: "Tak" }, { title: "Nie" }],
       isFinal: true,
@@ -232,7 +232,7 @@ export const STEP_RESULTS: StepResults[] = [
   {
     comments:
       "<b>ENTEROBACTERIACEAE;</b> bakterie należące do rodziny Enterobacteriaceae wykazują naturalną oporność na: klindamycynę, kwas fusydowy, glikopeptydy (wankomycyna, teikoplaniny), makrolidy (azytromycyna, erytromycyna, klarytromycyna) oraz rifampicynę; wyjątkiem jest azytromycyna wykazująca aktywność wobec szczepów wywołujących biegunkę, w tym Campylobacter spp., Salmonella spp., Shigella spp., enteropatogenne szczepy Escherichia coli",
-    displayIf: [new StepDisplayCondition(8, "Enterobacter", false)],
+    displayIf: [new StepDisplayCondition(8, "Enterobacterales", false)],
   },
   {
     comments: `<b>(-) UJEMNY:</b> Nie stwierdzono wzrostu bakterii po 24, 48 oraz 72 godzinach, zarówno na podłożach namnażających jak i selektywnych <b>w warunkach beztlenowych</b>.
@@ -259,15 +259,16 @@ export const STEP_RESULTS: StepResults[] = [
     displayIf: [new StepDisplayCondition(6, "Tak", false)],
   },
   {
-    mycology:
-      "Wyhodowano <b>Malassezia spp. / Candida spp. / Rhodotorula spp.</b>",
-    displayIf: [
-      new OrStepDisplayCondition(
-        4,
-        ["Malassezia", "Candida", "Rhodotorula"],
-        false
-      ),
-    ],
+    mycology: "Wyhodowano <b>Malassezia spp.</b>",
+    displayIf: [new OrStepDisplayCondition(4, ["Malassezia"], false)],
+  },
+  {
+    mycology: "Wyhodowano <b>Candida spp.</b>",
+    displayIf: [new OrStepDisplayCondition(4, ["Candida"], false)],
+  },
+  {
+    mycology: "Wyhodowano <b>Rhodotorula spp.</b>",
+    displayIf: [new OrStepDisplayCondition(4, ["Rhodotorula"], false)],
   },
   {
     mycology: "Nie wyhodowano grzybów drożdżopodobnych.",
